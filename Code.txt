@@ -1,0 +1,30 @@
+//ปรกาศตัวแปลและเซตขาต่าง
+const int soundSensorPin = D1;
+const int ledPin = D2;
+int ledState = LOW;
+unsigned long lastSoundTime = 0;
+const unsigned long DEBOUNCE_DELAY = 300;
+void setup() {
+  //เซตขา Pin
+  pinMode(soundSensorPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, ledState);
+  Serial.begin(115200);
+  Serial.println("Sound Toggle Switch Ready");
+}
+void loop() {
+  int soundDetected = digitalRead(soundSensorPin);
+  //ตรวจว่าพบสัญญาณเสียงหรือไม่ และเวลามากกว่าเวลาปัจจุบันตามที่ตั้งไว้หรือไม่
+  if (soundDetected == HIGH && (millis() - lastSoundTime > DEBOUNCE_DELAY)) {
+    Serial.print("Sound detected! Toggling state...");
+    if (ledState == LOW) {
+      ledState = HIGH;
+      Serial.println("LED ON");
+    } else {
+      ledState = LOW;
+      Serial.println("LED OFF");
+    }
+    digitalWrite(ledPin, ledState);
+    lastSoundTime = millis();
+  }
+}
